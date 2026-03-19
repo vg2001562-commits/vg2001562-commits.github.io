@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeetCode профиль - Моя визитка</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">👤 RGSU Student</a>
+            <ul class="nav-menu">
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="about.html">О себе</a></li>
+                <li><a href="portfolio.html">Работы</a></li>
+                <li><a href="leetcode.html" class="active">LeetCode</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <section class="page-header">
+            <h1>Мой LeetCode профиль</h1>
+            <p>Решаю задачи и развиваю алгоритмическое мышление</p>
+        </section>
+
+        <section class="leetcode-section">
+            <div class="leetcode-card">
+                <div class="leetcode-icon">💻</div>
+                <h2>LeetCode аккаунт</h2>
+                <p>Присоединяйтесь ко мне на LeetCode — платформе для подготовки к техническим собеседованиям и улучшения навыков программирования!</p>
+                
+                <div class="leetcode-stats">
+                    <div class="stat">
+                        <span class="stat-value">🏆</span>
+                        <span class="stat-label">Решаю задачи</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">📊</span>
+                        <span class="stat-label">Алгоритмы</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">⭐</span>
+                        <span class="stat-label">Структуры данных</span>
+                    </div>
+                </div>
+
+                <a href="https://leetcode.com/u/ak1nec/" target="_blank" class="btn btn-leetcode">
+                    Перейти на LeetCode →
+                </a>
+                <p class="note">Нажмите на кнопку, чтобы открыть LeetCode. Добавьте меня в друзья!</p>
+                
+                <div class="leetcode-username">
+                    <span>Мой username: </span>
+                    <code>rgsu_student_2026</code>
+                    <button class="copy-btn" onclick="copyUsername()">📋 Копировать</button>
+                </div>
+            </div>
+
+            <div class="leetcode-tips">
+                <h3>🎯 Зачем решать задачи на LeetCode?</h3>
+                <ul>
+                    <li>Подготовка к собеседованиям в IT-компании</li>
+                    <li>Улучшение навыков алгоритмического мышления</li>
+                    <li>Знакомство с разными структурами данных</li>
+                    <li>Общение с сообществом разработчиков</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Моя визитка. Все права защищены.</p>
+    </footer>
+
+    <script>
+        function copyUsername() {
+            navigator.clipboard.writeText('rgsu_student_2026');
+            alert('Username скопирован!');
+        }
+    </script>
+</body>
+</html>
