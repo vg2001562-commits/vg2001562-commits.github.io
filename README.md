@@ -1,4 +1,4 @@
-# vg2001562-commits.github.io[about.html](https://github.com/user-attachments/files/26126660/about.html)
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
