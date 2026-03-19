@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Визуализация алгоритмов - RGSU Student</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        /* Навигация */
+        .navbar {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            color: white;
+            text-decoration: none;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            background-color: #34495e;
+        }
+
+        /* Основной контент */
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* Панель управления */
+        .control-panel {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .panel-container h2 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .algorithm-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .algo-btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            background-color: #3498db;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .algo-btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .speed-control input[type="range"] {
+            flex: 1;
+            max-width: 300px;
+        }
+
+        .reset-btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            background-color: #e74c3c;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        .reset-btn:hover {
+            background-color: #c0392b;
+        }
+
+        /* Область визуализации */
+        .visualization-area {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .visualization-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        #algorithm-title {
+            color: #2c3e50;
+        }
+
+        .status-message {
+            padding: 0.5rem 1rem;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            color: #666;
+        }
+
+        .array-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 1rem;
+            min-height: 300px;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .array-bar {
+            width: 50px;
+            background-color: #3498db;
+            border-radius: 5px 5px 0 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            padding-bottom: 5px;
+            color: white;
+            font-weight: bold;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .array-bar.current {
+            background-color: #e74c3c;
+            transform: scale(1.05);
+        }
+
+        .array-bar.found {
+            background-color: #f39c12;
+            transform: scale(1.05);
+        }
+
+        .array-bar.comparing {
+            background-color: #f39c12;
+        }
+
+        .array-bar.passed {
+            background-color: #95a5a6;
+        }
+
+        .array-bar.filtered {
+            background-color: #2ecc71;
+        }
+
+        .array-bar.accumulated {
+            background-color: #9b59b6;
+        }
+
+        /* Специальные индикаторы */
+        .special-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .accumulator-box,
+        .search-target {
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            font-size: 1.1rem;
+        }
+
+        .accumulator-box.hidden,
+        .search-target.hidden {
+            display: none;
+        }
+
+        #accumulator-value,
+        #target-value {
+            font-weight: bold;
+            color: #e74c3c;
+            margin-left: 0.5rem;
+        }
+
+        /* Информация об алгоритмах */
+        .algorithm-info {
+            margin-top: 3rem;
+        }
+
+        .algorithm-info h2 {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .info-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .info-card h3 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .info-card p {
+            color: #666;
+        }
+
+        /* Футер */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background-color: #2c3e50;
+            color: white;
+            margin-top: 3rem;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav-menu {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .algorithm-selector {
+                justify-content: center;
+            }
+            
+            .array-bar {
+                width: 40px;
+            }
+            
+            .visualization-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">👤 RGSU Student</a>
+            <ul class="nav-menu">
+                <li><a href="#" class="active">Главная</a></li>
+                <li><a href="#">О себе</a></li>
+                <li><a href="#">Работы</a></li>
+                <li><a href="#">LeetCode</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <section class="page-header">
+            <h1>Визуализация алгоритмов JavaScript</h1>
+            <p>Интерактивная демонстрация работы основных алгоритмов и методов массивов</p>
+        </section>
+
+        <!-- Панель управления -->
+        <section class="control-panel">
+            <div class="panel-container">
+                <h2>🎮 Панель управления</h2>
+                <div class="algorithm-selector">
+                    <button class="algo-btn" data-algo="forEach">🔄 forEach</button>
+                    <button class="algo-btn" data-algo="filter">🔍 filter</button>
+                    <button class="algo-btn" data-algo="search">🎯 search (линейный)</button>
+                    <button class="algo-btn" data-algo="sort">📊 sort (пузырьком)</button>
+                    <button class="algo-btn" data-algo="reduce">🧮 reduce (сумма)</button>
+                    <button class="algo-btn" data-algo="map">🗺️ map</button>
+                    <button class="algo-btn" data-algo="binarySearch">⚡ бинарный поиск</button>
+                </div>
+                <div class="speed-control">
+                    <label for="speed">Скорость анимации:</label>
+                    <input type="range" id="speed" min="100" max="1500" value="700" step="50">
+                    <span id="speed-value">700 мс</span>
+                </div>
+                <button id="resetArray" class="reset-btn">🔄 Сгенерировать новый массив</button>
+            </div>
+        </section>
+
+        <!-- Область визуализации -->
+        <section class="visualization-area">
+            <div class="visualization-header">
+                <h2 id="algorithm-title">Выберите алгоритм</h2>
+                <div id="status" class="status-message">Нажмите на кнопку алгоритма для начала</div>
+            </div>
+            
+            <div class="array-container" id="visualization"></div>
+            
+            <!-- Специальные индикаторы для разных алгоритмов -->
+            <div class="special-indicators">
+                <div id="accumulator-box" class="accumulator-box hidden">
+                    <span>Аккумулятор:</span>
+                    <span id="accumulator-value">0</span>
+                </div>
+                <div id="search-target" class="search-target hidden">
+                    <span>Ищем число:</span>
+                    <span id="target-value">7</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Информация об алгоритмах -->
+        <section class="algorithm-info">
+            <h2>📚 Как работают алгоритмы</h2>
+            <div class="info-grid">
+                <div class="info-card">
+                    <h3>🔄 forEach</h3>
+                    <p>Проходит по каждому элементу массива и выполняет указанную операцию. Красным подсвечивается текущий обрабатываемый элемент.</p>
+                </div>
+                <div class="info-card">
+                    <h3>🔍 filter</h3>
+                    <p>Создает новый массив с элементами, прошедшими проверку. Зеленые - проходят условие (>4), серые - не проходят.</p>
+                </div>
+                <div class="info-card">
+                    <h3>🎯 search</h3>
+                    <p>Линейный поиск элемента. Последовательно сравнивает каждый элемент с искомым (7). Найденный элемент подсвечивается оранжевым.</p>
+                </div>
+                <div class="info-card">
+                    <h3>📊 sort</h3>
+                    <p>Пузырьковая сортировка. Сравнивает соседние элементы (оранжевая пара) и меняет их местами, если нужно.</p>
+                </div>
+                <div class="info-card">
+                    <h3>🧮 reduce</h3>
+                    <p>Суммирует все элементы массива. Красный - текущий элемент, фиолетовый - аккумулятор, серый - уже обработанные элементы.</p>
+                </div>
+                <div class="info-card">
+                    <h3>🗺️ map</h3>
+                    <p>Создает новый массив, применяя функцию к каждому элементу. Удваивает значение каждого числа.</p>
+                </div>
+                <div class="info-card">
+                    <h3>⚡ бинарный поиск</h3>
+                    <p>Быстрый поиск в отсортированном массиве. Каждый шаг делит область поиска пополам.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Моя визитка. Все права защищены.</p>
+    </footer>
+
+    <script>
+        class AlgorithmVisualizer {
+            constructor() {
+                this.array = [];
+                this.arraySize = 10;
+                this.animationSpeed = 700;
+                this.isAnimating = false;
+                this.animationTimeout = null;
+                this.targetValue = 7;
+                
+                this.init();
+            }
+
+            init() {
+                // Генерируем начальный массив
+                this.generateRandomArray();
+                
+                // Добавляем обработчики событий
+                document.querySelectorAll('.algo-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => this.handleAlgorithmClick(e));
+                });
+                
+                document.getElementById('resetArray').addEventListener('click', () => {
+                    if (this.isAnimating) return;
+                    this.generateRandomArray();
+                    this.renderArray();
+                    this.updateStatus('Массив обновлен');
+                    document.getElementById('algorithm-title').textContent = 'Выберите алгоритм';
+                });
+                
+                document.getElementById('speed').addEventListener('input', (e) => {
+                    this.animationSpeed = parseInt(e.target.value);
+                    document.getElementById('speed-value').textContent = this.animationSpeed + ' мс';
+                });
+
+                // Начальный рендер
+                this.renderArray();
+            }
+
+            generateRandomArray() {
+                this.array = [];
+                for (let i = 0; i < this.arraySize; i++) {
+                    this.array.push(Math.floor(Math.random() * 9) + 1); // числа от 1 до 9
+                }
+            }
+
+            renderArray(highlights = {}) {
+                const container = document.getElementById('visualization');
+                container.innerHTML = '';
+                
+                this.array.forEach((value, index) => {
+                    const bar = document.createElement('div');
+                    bar.className = 'array-bar';
+                    
+                    // Добавляем классы для подсветки
+                    if (highlights.current === index) {
+                        bar.classList.add('current');
+                    } else if (highlights.found === index) {
+                        bar.classList.add('found');
+                    } else if (highlights.comparing && highlights.comparing.includes(index)) {
+                        bar.classList.add('comparing');
+                    } else if (highlights.passed && highlights.passed.includes(index)) {
+                        bar.classList.add('passed');
+                    } else if (highlights.filtered && highlights.filtered.includes(index)) {
+                        bar.classList.add('filtered');
+                    } else if (highlights.accumulated && highlights.accumulated.includes(index)) {
+                        bar.classList.add('accumulated');
+                    }
+                    
+                    // Устанавливаем высоту и текст
+                    bar.style.height = (value * 30) + 'px';
+                    bar.innerHTML = `<span>${value}</span>`;
+                    
+                    container.appendChild(bar);
+                });
+            }
+
+            updateStatus(message) {
+                document.getElementById('status').textContent = message;
+            }
+
+            async sleep() {
+                return new Promise(resolve => {
+                    this.animationTimeout = setTimeout(resolve, this.animationSpeed);
+                });
+            }
+
+            stopAnimation() {
+                if (this.animationTimeout) {
+                    clearTimeout(this.animationTimeout);
+                    this.animationTimeout = null;
+                }
+                this.isAnimating = false;
+            }
+
+            async handleAlgorithmClick(e) {
+                if (this.isAnimating) {
+                    this.stopAnimation();
+                }
+                
+                this.isAnimating = true;
+                const algorithm = e.target.dataset.algo;
+                
+                // Обновляем заголовок
+                const titles = {
+                    forEach: '🔄 forEach - обход массива',
+                    filter: '🔍 filter - фильтрация элементов > 4',
+                    search: '🎯 Линейный поиск - ищем число ' + this.targetValue,
+                    sort: '📊 Сортировка пузырьком',
+                    reduce: '🧮 reduce - сумма элементов',
+                    map: '🗺️ map - удвоение значений',
+                    binarySearch: '⚡ Бинарный поиск - ищем число ' + this.targetValue
+                };
+                document.getElementById('algorithm-title').textContent = titles[algorithm] || 'Визуализация алгоритма';
+                
+                // Скрываем специальные индикаторы
+                document.getElementById('accumulator-box').classList.add('hidden');
+                document.getElementById('search-target').classList.add('hidden');
+                
+                // Запускаем соответствующий алгоритм
+                switch(algorithm) {
+                    case 'forEach':
+                        await this.visualizeForEach();
+                        break;
+                    case 'filter':
+                        await this.visualizeFilter();
+                        break;
+                    case 'search':
+                        document.getElementById('search-target').classList.remove('hidden');
+                        await this.visualizeLinearSearch();
+                        break;
+                    case 'sort':
+                        await this.visualizeBubbleSort();
+                        break;
+                    case 'reduce':
+                        document.getElementById('accumulator-box').classList.remove('hidden');
+                        await this.visualizeReduce();
+                        break;
+                    case 'map':
+                        await this.visualizeMap();
+                        break;
+                    case 'binarySearch':
+                        document.getElementById('search-target').classList.remove('hidden');
+                        // Для бинарного поиска нужен отсортированный массив
+                        this.array.sort((a, b) => a - b);
+                        this.renderArray();
+                        await this.sleep();
+                        await this.visualizeBinarySearch();
+                        break;
+                }
+                
+                this.isAnimating = false;
+            }
+
+            async visualizeForEach() {
+                this.updateStatus('Выполняется forEach...');
+                
+                for (let i = 0; i < this.array.length; i++) {
+                    this.renderArray({ current: i });
+                    this.updateStatus(`Обрабатываем элемент ${this.array[i]} на позиции ${i}`);
+                    await this.sleep();
+                }
+                
+                this.renderArray();
+                this.updateStatus('forEach завершен! Обработано ' + this.array.length + ' элементов');
+            }
+
+            async visualizeFilter() {
+                this.updateStatus('Выполняется filter (условие: элемент > 4)...');
+                const passed = [];
+                const failed = [];
+                
+                for (let i = 0; i < this.array.length; i++) {
+                    const condition = this.array[i] > 4;
+                    
+                    if (condition) {
+                        passed.push(i);
+                        this.renderArray({ 
+                            current: i,
+                            filtered: passed 
+                        });
+                        this.updateStatus(`Элемент ${this.array[i]} > 4 - проходит фильтр (зеленый)`);
+                    } else {
+                        failed.push(i);
+                        this.renderArray({ 
+                            current: i,
+                            passed: failed 
+                        });
+                        this.updateStatus(`Элемент ${this.array[i]} <= 4 - не проходит фильтр (серый)`);
+                    }
+                    
+                    await this.sleep();
+                }
+                
+                const filteredArray = this.array.filter(x => x > 4);
+                this.renderArray({ filtered: passed });
+                this.updateStatus(`filter завершен! Отфильтровано ${filteredArray.length} элементов: [${filteredArray.join(', ')}]`);
+            }
+
+            async visualizeLinearSearch() {
+                this.updateStatus('Выполняется линейный поиск...');
+                let foundIndex = -1;
+                
+                for (let i = 0; i < this.array.length; i++) {
+                    this.renderArray({ current: i });
+                    this.updateStatus(`Сравниваем ${this.array[i]} с ${this.targetValue}`);
+                    await this.sleep();
+                    
+                    if (this.array[i] === this.targetValue) {
+                        foundIndex = i;
+                        this.renderArray({ found: i });
+                        this.updateStatus(`✅ Нашли число ${this.targetValue} на позиции ${i}!`);
+                        await this.sleep();
+                        break;
+                    }
+                }
+                
+                if (foundIndex === -1) {
+                    this.renderArray();
+                    this.updateStatus(`❌ Число ${this.targetValue} не найдено в массиве`);
+                }
+            }
+
+            async visualizeBubbleSort() {
+                this.updateStatus('Выполняется сортировка пузырьком...');
+                const arr = [...this.array];
+                const n = arr.length;
+                
+                for (let i = 0; i < n - 1; i++) {
+                    for (let j = 0; j < n - i - 1; j++) {
+                        // Подсвечиваем сравниваемые элементы
+                        this.renderArray({ comparing: [j, j + 1] });
+                        this.updateStatus(`Сравниваем ${arr[j]} и ${arr[j + 1]}`);
+                        await this.sleep();
+                        
+                        if (arr[j] > arr[j + 1]) {
+                            // Меняем элементы местами
+                            [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+                            
+                            // Показываем обмен
+                            this.array = [...arr];
+                            this.renderArray({ comparing: [j, j + 1] });
+                            this.updateStatus(`Меняем местами: ${arr[j + 1]} и ${arr[j]}`);
+                            await this.sleep();
+                        }
+                    }
+                    // Подсвечиваем отсортированную часть
+                    this.updateStatus(`Элемент ${arr[n - i - 1]} на своем месте`);
+                }
+                
+                this.array = arr;
+                this.renderArray();
+                this.updateStatus('Сортировка пузырьком завершена!');
+            }
+
+            async visualizeReduce() {
+                this.updateStatus('Выполняется reduce (суммирование)...');
+                let accumulator = 0;
+                document.getElementById('accumulator-value').textContent = accumulator;
+                
+                for (let i = 0; i < this.array.length; i++) {
+                    // Подсвечиваем текущий элемент и обработанные
+                    const accumulated = Array.from({length: i}, (_, idx) => idx);
+                    this.renderArray({ 
+                        current: i,
+                        accumulated: accumulated
+                    });
+                    
+                    this.updateStatus(`Аккумулятор: ${accumulator} + ${this.array[i]}`);
+                    await this.sleep();
+                    
+                    accumulator += this.array[i];
+                    document.getElementById('accumulator-value').textContent = accumulator;
+                }
+                
+                // Показываем все обработанные элементы
+                this.renderArray({ accumulated: Array.from({length: this.array.length}, (_, idx) => idx) });
+                this.updateStatus(`reduce завершен! Сумма всех элементов = ${accumulator}`);
+            }
+
+            async visualizeMap() {
+                this.updateStatus('Выполняется map (удвоение значений)...');
+                const newArray = [];
+                
+                for (let i = 0; i < this.array.length; i++) {
+                    this.renderArray({ current: i });
+                    const newValue = this.array[i] * 2;
+                    this.updateStatus(`Удваиваем ${this.array[i]} → ${newValue}`);
+                    await this.sleep();
+                    newArray.push(newValue);
+                }
+                
+                // Показываем результат
+                this.array = newArray;
+                this.renderArray();
+                this.updateStatus(`map завершен! Новый массив: [${newArray.join(', ')}]`);
+            }
+
+            async visualizeBinarySearch() {
+                this.updateStatus('Выполняется бинарный поиск...');
+                
+                let left = 0;
+                let right = this.array.length - 1;
+                let foundIndex = -1;
+                
+                while (left <= right) {
+                    const mid = Math.floor((left + right) / 2);
+                    
+                    // Подсвечиваем текущую область поиска
+                    const searchArea = [];
+                    for (let i = left; i <= right; i++) {
+                        searchArea.push(i);
+                    }
+                    
+                    this.renderArray({ 
+                        current: mid,
+                        comparing: searchArea
+                    });
+                    
+                    this.updateStatus(`Ищем в области [${left}..${right}], средний элемент: ${this.array[mid]}`);
+                    await this.sleep();
+                    
+                    if (this.array[mid] === this.targetValue) {
+                        foundIndex = mid;
+                        this.renderArray({ found: mid });
+                        this.updateStatus(`✅ Нашли число ${this.targetValue} на позиции ${mid}!`);
+                        await this.sleep();
+                        break;
+                    }
+                    
+                    if (this.array[mid] < this.targetValue) {
+                        left = mid + 1;
+                        this.updateStatus(`${this.array[mid]} < ${this.targetValue}, ищем в правой половине`);
+                    } else {
+                        right = mid - 1;
+                        this.updateStatus(`${this.array[mid]} > ${this.targetValue}, ищем в левой половине`);
+                    }
+                    
+                    await this.sleep();
+                }
+                
+                if (foundIndex === -1) {
+                    this.renderArray();
+                    this.updateStatus(`❌ Число ${this.targetValue} не найдено в массиве`);
+                }
+            }
+        }
+
+        // Инициализация после загрузки страницы
+        document.addEventListener('DOMContentLoaded', () => {
+            new AlgorithmVisualizer();
+        });
+    </script>
+</body>
+</html>
